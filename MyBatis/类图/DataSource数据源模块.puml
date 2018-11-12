@@ -1,0 +1,104 @@
+@startuml
+
+
+interface DataSourceFactory {
+    + setProperties(Properties props): void
+    + getDataSource(): DataSource
+}
+
+class UnpooledDataSourceFactory {
+}
+
+class PooledDataSourceFactory {
+
+}
+
+class JndiDataSourceFactory {
+
+}
+
+DataSourceFactory <|.. UnpooledDataSourceFactory
+DataSourceFactory <|.. PooledDataSourceFactory
+DataSourceFactory <|.. JndiDataSourceFactory
+
+
+interface DataSource {
+    + getConnection(): Connection
+    + getConnection(String username, String password): Connection
+}
+
+class UnpooledDataSource {
+    - driverClassLoader: ClassLoader
+    - driverProperties: Properties
+    - registeredDrivers: Map<String, Driver>
+    - driver: String
+    - url: String
+    - username: String
+    - password: String
+    - autoCommit: Boolean
+    - defaultTransactionIsolationLevel: Integer
+
+    + getConnection(): Connection
+    + getConnection(String username, String password): Connection
+}
+
+class PooledDataSource {
+    - dataSource: UnpooledDataSource
+    - state: PoolState
+    - poolMaximumActiveConnections: int
+    - poolMaximumIdleConnections: int
+    - poolMaximumCheckoutTime: int
+    - poolTimeToWait: int
+    - poolMaximumLocalBadConnectionTolerance: int
+    - poolPingQuery: String
+    - poolPingEnabled: int
+    - poolPingConnectionsNotUsedFor: int
+    - expectedConnectionTypeCode: int
+
+    + getConnection(): Connection
+    + getConnection(String username, String password): Connection
+}
+
+class PoolState {
+    - dataSource: PooledDataSource
+    - idleConnections: List<PooledConnection>
+    - activeConnections: List<PooledConnection>
+    - requestCount: long
+    - accumulatedRequestTime: long
+    - accumulatedCheckoutTime: long
+    - claimedOverdueConnectionCount: long
+    - accumulatedCheckoutTimeOfOverdueConnections: long
+    - accumulatedWaitTime: long
+    - hadToWaitCount: long
+    - badConnectionCount: long
+
+    + PoolState(PooledDataSource dataSource)
+}
+
+class PooledConnection {
+    - hashCode: int
+    - dataSource: PooledDataSource
+    - realConnection: Connection
+    - proxyConnection: Connection
+    - checkoutTimestamp: long
+    - createdTimestamp: long
+    - lastUsedTimestamp: long
+    - connectionTypeCode: int
+    - valid: boolean
+}
+
+
+DataSource <|.. UnpooledDataSource
+DataSource <|.. PooledDataSource
+
+PooledDataSource o-- UnpooledDataSource
+PooledDataSource o-- PoolState
+PoolState *-- PooledDataSource
+
+DataSourceFactory ..> DataSource
+PoolState "1" ..> "many" PooledConnection
+
+PooledConnection *-- PooledDataSource
+PooledConnection *-- Connection
+
+@enduml

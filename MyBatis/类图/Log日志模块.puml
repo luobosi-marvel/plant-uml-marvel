@@ -1,0 +1,69 @@
+@startuml
+
+
+class LogFactory {
+    + useCustomLogging(Class<? extends Log> clazz): void
+    + getLog(Class<?> aClass): Log
+    + getLog(String logger): Log
+}
+
+interface Log {
+
+    + isDebugEnabled(): boolean
+    + isTraceEnabled(): boolean
+    + error(String s, Throwable e): void
+    + error(String s): void
+    + debug(String s): void
+    + trace(String s): void
+    + warn(String s) : void
+}
+note left of Log: 使用了适配器模式，用来兼容各种业界流行的日志框架
+
+class Jdk14LoggingImpl {
+    + isDebugEnabled(): boolean
+    + isTraceEnabled(): boolean
+    + error(String s, Throwable e): void
+    + error(String s): void
+    + debug(String s): void
+    + trace(String s): void
+    + warn(String s) : void
+}
+
+class Log4jImpl {
+    + isDebugEnabled(): boolean
+    + isTraceEnabled(): boolean
+    + error(String s, Throwable e): void
+    + error(String s): void
+    + debug(String s): void
+    + trace(String s): void
+    + warn(String s) : void
+}
+
+class Log4j2Impl {
+    + isDebugEnabled(): boolean
+    + isTraceEnabled(): boolean
+    + error(String s, Throwable e): void
+    + error(String s): void
+    + debug(String s): void
+    + trace(String s): void
+    + warn(String s) : void
+}
+
+class Slf4jImpl {
+    + isDebugEnabled(): boolean
+    + isTraceEnabled(): boolean
+    + error(String s, Throwable e): void
+    + error(String s): void
+    + debug(String s): void
+    + trace(String s): void
+    + warn(String s) : void
+}
+
+Log <|.. Jdk14LoggingImpl
+Log <|.. Log4jImpl
+Log <|.. Log4j2Impl
+Log <|.. Slf4jImpl
+
+LogFactory ..> Log
+
+@enduml

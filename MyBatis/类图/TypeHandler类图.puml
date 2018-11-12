@@ -1,0 +1,86 @@
+@startuml
+
+class TypeHandlerRegistry {
+
+    - <size:14>JDBC_TYPE_HANDLER_MAP</size>: Map<JdbcType/* jdbc type*/, TypeHandler<?>/* 对应的 typeHandler */>
+    - <size:14>TYPE_HANDLER_MAP</size>: Map<Type, Map<JdbcType, TypeHandler<?>>>
+    - <size:14>UNKNOWN_TYPE_HANDLER</size>: TypeHandler<Object>
+    - <size:14>ALL_TYPE_HANDLERS_MAP</size>: final Map<Class<?>, TypeHandler<?>>
+    - <size:14>NULL_TYPE_HANDLER_MAP</size>: Map<JdbcType, TypeHandler<?>>
+    - <size:14>defaultEnumTypeHandler</size>: Class<? extends TypeHandler>
+
+    + register(Class<?> javaTypeClass, JdbcType jdbcType, Class<?> typeHandlerClass): void
+    + getTypeHandler(JdbcType jdbcType): TypeHandler<?>
+    + hasTypeHandler(Class<?> javaType): boolean
+}
+
+note left of TypeHandlerRegistry: 所有的 TypeHandler 都会在该类里面注册\n有很多的重载方法，方便我们获取相应的 TypeHandler
+
+interface TypeHandler {
+    + setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType): void
+    + getResult(ResultSet rs, String columnName): T
+    + getResult(ResultSet rs, int columnIndex): T
+    + getResult(CallableStatement cs, int columnIndex): T
+}
+
+abstract class TypeReference {
+    - rawType: Type
+    # getSuperclassTypeParameter(Class<?> clazz): Type
+    + getRawType(): Type
+}
+
+abstract class BaseTypeHandler {
+    + setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType): void
+    + getResult(ResultSet rs, String columnName): T
+    + getResult(ResultSet rs, int columnIndex): T
+    + getResult(CallableStatement cs, int columnIndex): T
+    + setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType): T
+    + getNullableResult(ResultSet rs, String columnName): T
+    + getNullableResult(ResultSet rs, int columnIndex): T
+    + getNullableResult(CallableStatement cs, int columnIndex): T
+
+}
+
+note left of BaseTypeHandler: 基础抽象类
+
+class IntegerTypeHandler {
+    + setNonNullParameter(PreparedStatement ps, int i, Integer parameter, JdbcType jdbcType): Integer
+    + getNullableResult(ResultSet rs, String columnName): Integer
+    + getNullableResult(ResultSet rs, int columnIndex): Integer
+    + getNullableResult(CallableStatement cs, int columnIndex): Integer
+}
+
+class ArrayTypeHandler {
+    + setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType): Object
+    + getNullableResult(ResultSet rs, String columnName): Object
+    + getNullableResult(ResultSet rs, int columnIndex): Object
+    + getNullableResult(CallableStatement cs, int columnIndex): Object
+}
+
+
+class BooleanTypeHandler {
+    + setNonNullParameter(PreparedStatement ps, int i, Boolean parameter, JdbcType jdbcType): Boolean
+    + getNullableResult(ResultSet rs, String columnName): Boolean
+    + getNullableResult(ResultSet rs, int columnIndex): Boolean
+    + getNullableResult(CallableStatement cs, int columnIndex): Boolean
+}
+
+class LongTypeHandler {
+    + setNonNullParameter(PreparedStatement ps, int i, Long parameter, JdbcType jdbcType): Long
+    + getNullableResult(ResultSet rs, String columnName): Long
+    + getNullableResult(ResultSet rs, int columnIndex): Long
+    + getNullableResult(CallableStatement cs, int columnIndex): Long
+}
+
+
+TypeReference <|-- BaseTypeHandler
+TypeHandler <|.. BaseTypeHandler
+
+BaseTypeHandler <|-- IntegerTypeHandler
+BaseTypeHandler <|-- ArrayTypeHandler
+BaseTypeHandler <|-- BooleanTypeHandler
+BaseTypeHandler <|-- LongTypeHandler
+
+TypeHandlerRegistry ..> TypeHandler
+
+@enduml
