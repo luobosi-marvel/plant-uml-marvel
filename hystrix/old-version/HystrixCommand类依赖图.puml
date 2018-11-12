@@ -1,0 +1,13 @@
+@startuml
+HystrixExecutable  <|.. HystrixCommand
+HystrixExecutable : run() R
+HystrixExecutable : queue() Future<R>
+HystrixCommand o-- HystrixCircuitBreaker
+HystrixCommand o-- HystrixThreadPool
+HystrixCommand o-- HystrixThreadPoolKey
+HystrixCommand o-- HystrixCommandProperties
+HystrixCommand o-- HystrixCommandMetrics
+HystrixCommand o-- HystrixCommandKey
+HystrixCommand o-- HystrixCommandGroupKey
+
+@enduml                                       ∂
