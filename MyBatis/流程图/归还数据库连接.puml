@@ -1,0 +1,20 @@
+@startuml
+start
+
+: 从 activeConnections 集合中\n移除 PooledConnection 对象;
+
+if (conn.isValid()) then (Y)
+
+if (空闲连接数是否已到达上限) then(Y)
+: 关闭真正的数据库连接;
+else (N)
+: 将连接添加到 idlesConnection 集合中;
+: 唤醒阻塞的线程;
+endif
+
+else (N)
+: 统计无效 PooledConnection 对象个数;
+endif
+
+stop
+@enduml

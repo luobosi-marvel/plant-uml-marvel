@@ -1,0 +1,39 @@
+@startuml
+start
+while(conn == null) is (Y)
+
+if (是否有空闲连接) then (Y)
+: 获取空闲连接;
+else (N)
+
+if (活跃连接是否已达到最大值) then (Y)
+
+if (是否有超时连接) then (Y)
+: 移除超时连接;
+: 创建新连接;
+else (N)
+: 阻塞等待;
+endif
+
+else (N)
+: 创建新连接;
+endif
+endif
+
+if (连接是否有效) then (Y)
+: 添加到 activeConnections 集合\n并进行相应的统计操作;
+else (N)
+: 将 conn 置为 null，并进行统计;
+endif
+
+
+endwhile(not empty)
+
+if (conn == null) then (Y)
+: 抛出异常;
+else (N)
+: 返回 conn;
+endif
+
+stop
+@enduml
