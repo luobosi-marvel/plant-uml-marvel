@@ -7,10 +7,11 @@ interface DataSourceFactory {
 }
 
 class UnpooledDataSourceFactory {
+    - dataSource: DataSource
 }
 
 class PooledDataSourceFactory {
-
+    - dataSource: DataSource
 }
 
 class JndiDataSourceFactory {
@@ -18,7 +19,7 @@ class JndiDataSourceFactory {
 }
 
 DataSourceFactory <|.. UnpooledDataSourceFactory
-DataSourceFactory <|.. PooledDataSourceFactory
+UnpooledDataSourceFactory <|-- PooledDataSourceFactory
 DataSourceFactory <|.. JndiDataSourceFactory
 
 PooledDataSourceFactory o-- PooledDataSource
