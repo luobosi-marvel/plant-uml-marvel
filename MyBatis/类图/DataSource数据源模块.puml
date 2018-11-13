@@ -21,6 +21,8 @@ DataSourceFactory <|.. UnpooledDataSourceFactory
 DataSourceFactory <|.. PooledDataSourceFactory
 DataSourceFactory <|.. JndiDataSourceFactory
 
+PooledDataSourceFactory o-- PooledDataSource
+UnpooledDataSourceFactory o-- UnpooledDataSource
 
 interface DataSource {
     + getConnection(): Connection
@@ -96,6 +98,7 @@ PooledDataSource o-- PoolState
 PoolState *-- PooledDataSource
 
 DataSourceFactory ..> DataSource
+
 PoolState "1" ..> "many" PooledConnection
 
 PooledConnection *-- PooledDataSource
