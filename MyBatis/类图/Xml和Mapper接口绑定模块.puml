@@ -1,0 +1,86 @@
+@startuml
+
+
+class MapperProxy {
+    - mapperInterface: Class<T>
+    - sqlSession: SqlSession
+    - methodCache: Map<Method, MapperMethod>
+    + invoke(Object proxy, Method method, Object[] args): Object
+}
+
+class MapperProxyFactory {
+    - mapperInterface: Class<T>
+    - methodCache: Map<Method, MapperMethod>
+    # newInstance(MapperProxy<T> mapperProxy): T
+    + newInstance(SqlSession sqlSession): T
+}
+
+class MapperRegistry {
+    - config: Configuration
+    - knownMappers: Map<Class<?>, MapperProxyFactory<?>>
+
+    + getMapper(Class<T> type, SqlSession sqlSession): T
+    + hasMapper(Class<T> type): boolean
+    + addMapper(Class<T> type): void
+    + getMappers(): Collection<Class<?>>
+    + addMappers(String packageName, Class<?> superType): void
+    + addMappers(String packageName): void
+}
+
+class MapperMethod {
+    - command: SqlCommand
+    - method: MethodSignature
+
+    + execute(SqlSession sqlSession, Object[] args): Object
+}
+
+class SqlCommand {
+    - name: String
+    - type: SqlCommandType
+    + getName(): String
+    + getType(): SqlCommandType
+}
+
+enum SqlCommandType {
+    + UNKNOWN
+    + INSERT
+    + UPDATE
+    + DELETE
+    + SELECT
+    + FLUSH
+}
+
+class MethodSignature {
+    - returnsMany: boolean
+    - returnsMap: boolean
+    - returnsVoid: boolean
+    - returnsCursor: boolean
+    - returnsOptional: boolean
+    - returnType: Class<T>
+    - mapKey: String
+    - resultHandlerIndex: Integer
+    - rowBoundsIndex: Integer
+    - paramNameResolver: ParamNameResolver
+}
+
+interface InvocationHandler{
+    + invoke(Object proxy, Method method, Object[] args): Object
+}
+
+SqlCommandType <-- SqlCommand
+
+SqlCommand <--o MapperMethod
+MethodSignature <--o MapperMethod
+
+InvocationHandler <|.. MapperProxy
+SqlSession <--o MapperProxy
+MapperMethod <--o MapperProxy
+
+
+MapperProxy <--* MapperProxyFactory
+MapperProxyFactory <--o MapperRegistry
+Configuration <--o MapperRegistry
+
+
+
+@enduml
