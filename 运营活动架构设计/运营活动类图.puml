@@ -1,0 +1,55 @@
+@startuml
+
+
+
+interface ActivityRequest
+abstract class BaseActivityRequest
+class ConcreteActivityRequest
+
+interface ActivityResponse
+abstract class BaseActivityResponse {
+    - channelId: String 渠道类型
+}
+class ConcreteActivityResponse
+
+interface ActivityDTO
+abstract class BaseActivityDTO
+class ConcreteActivityDTO
+
+interface IActivityExecutor {
+    + execute(REP request): RSP
+}
+note left of IActivityExecutor: 泛型：IActivityExecutor <REP extends ActivityRequest, RSP>
+
+abstract class AbstractActivityPartExecutor {
+    + execute(REP request): RSP
+    # buildDTO(): DTO
+    # handle(REP request, DTO dto): RSP
+    # buildResponse(REP request, RuleHandleResultDTO resultDTO, DTO dto): RSP
+    # _handle(REP request, RuleHandleResultDTO resultDTO, DTO dto): void
+    - buildActivityDTO(REP request, PreSellActivityDO preSellActivityDO): DTO
+    - isActivitySupportRepeatPart(): boolean
+    - doBusinessCheck(REP request, DTO dto): void
+}
+
+class ConcreteActivityPartExecutor {
+    + execute(HelpCutPriceRequest request): CutPriceActivityResponse
+}
+
+ActivityRequest <|.. BaseActivityRequest
+BaseActivityRequest <|-- ConcreteActivityRequest
+
+ActivityResponse <|.. BaseActivityResponse
+BaseActivityResponse <|-- ConcreteActivityResponse
+
+ActivityDTO <|.. BaseActivityDTO
+BaseActivityDTO <|-- ConcreteActivityDTO
+
+IActivityExecutor <|.. AbstractActivityPartExecutor
+AbstractActivityPartExecutor <|-- ConcreteActivityPartExecutor
+
+AbstractActivityPartExecutor ..> ActivityRequest
+AbstractActivityPartExecutor ..> ActivityResponse
+AbstractActivityPartExecutor ..> ActivityDTO
+
+@enduml
