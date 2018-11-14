@@ -67,6 +67,8 @@ interface InvocationHandler{
     + invoke(Object proxy, Method method, Object[] args): Object
 }
 
+ParamNameResolver <--o MethodSignature
+
 SqlCommandType <-- SqlCommand
 
 SqlCommand <--o MapperMethod
