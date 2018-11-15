@@ -1,0 +1,139 @@
+@startuml
+
+interface Component {
+    + operation()
+}
+
+class ConcreteComponent {
+    + operation()
+}
+
+class Decorator {
+    - component: Component
+    + operation()
+}
+
+class ConcreteComponentA {
+    - addedState: int
+    + operation()
+}
+
+class ConcreteComponentB {
+    + operation()
+    + addedBehavior()
+}
+
+Component <|.. ConcreteComponent
+Component <|.. Decorator
+Component <--* Decorator
+
+
+Decorator <|-- ConcreteComponentA
+Decorator <|-- ConcreteComponentB
+
+interface Cache {
+    + getId(): String
+    + putObject(Object key, Object value): void
+    + getObject(Object key): Object
+    + removeObject(Object key):
+    + clear(): void
+    + getSize(): int
+    + getReadWriteLock(): ReadWriteLock
+}
+
+class PerpetualCache {
+    - id: String
+    - cache: Map<Object, Object>
+}
+
+class BlockingCache {
+    - delegate: Cache
+    - timeout: long
+    - locks: ConcurrentHashMap<Object, ReentrantLock>
+}
+
+class FifoCache {
+    - delegate: Cache
+    - keyList: Deque<Object>
+    - size: int
+}
+
+class LoggingCache {
+    - delegate: Cache
+    - log: Log
+    - requests: int
+    - hits: int
+}
+
+class LruCache {
+    - delegate: Cache
+    - keyMap: Map<Object, Object>
+    - eldestKey: Object
+}
+
+class ScheduledCache {
+    - delegate: Cache
+    - clearInterval: long
+    - lastClear: long
+}
+
+class SerializedCache {
+    - delegate: Cache
+}
+
+class SoftCache {
+    - delegate: Cache
+    - hardLinksToAvoidGarbageCollection: Deque<Object>
+    - queueOfGarbageCollectedEntries: ReferenceQueue<Object>
+    - numberOfHardLinks: int
+}
+
+class SynchronizedCache {
+    - delegate: Cache
+}
+
+class TransactionalCache {
+    - delegate: Cache
+    - clearOnCommit: boolean
+    - entriesToAddOnCommit: Map<Object, Object>
+    - entriesMissedInCache: Set<Object>
+}
+
+class WeakCache {
+    - delegate: Cache
+    - hardLinksToAvoidGarbageCollection: Deque<Object>
+    - queueOfGarbageCollectedEntries: ReferenceQueue<Object>
+    - numberOfHardLinks: int
+}
+
+
+
+
+Cache <|.. PerpetualCache
+Cache <|.. BlockingCache
+Cache <|.. FifoCache
+Cache <|.. LoggingCache
+Cache <|.. LruCache
+Cache <|.. ScheduledCache
+Cache <|.. SerializedCache
+Cache <|.. SoftCache
+Cache <|.. SynchronizedCache
+Cache <|.. TransactionalCache
+Cache <|.. WeakCache
+
+
+Cache <--* BlockingCache
+Cache <--* FifoCache
+Cache <--* LoggingCache
+Cache <--* LruCache
+Cache <--* ScheduledCache
+Cache <--* SerializedCache
+Cache <--* SoftCache
+Cache <--* SynchronizedCache
+Cache <--* TransactionalCache
+Cache <--* WeakCache
+
+
+
+
+@enduml
