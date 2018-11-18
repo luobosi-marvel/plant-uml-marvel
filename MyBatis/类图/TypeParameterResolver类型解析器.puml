@@ -1,0 +1,59 @@
+@startuml
+
+
+class TypeParameterResolver {
+    + resolveFieldType(Field field, Type srcType): Type
+    + resolveReturnType(Method method, Type srcType): Type
+    + resolveParamTypes(Method method, Type srcType): Type[]
+}
+
+
+interface Type {
+    + getTypeName(): String
+}
+
+class Class
+
+interface ParameterizedType {
+    + getActualTypeArguments(): Type[]
+    + getRawType(): Type
+    + getOwnerType(): Type
+}
+
+interface GenericArrayType {
+    + getGenericComponentType(): Type
+}
+
+
+interface TypeVariable {
+    + getBounds(): Type[]
+    + getAnnotatedBounds(): AnnotatedType[]
+    + getName(): String
+}
+
+interface WildcardType {
+    + getUpperBounds(): Type[]
+    + getLowerBounds(): Type[]
+}
+
+TypeParameterResolver ..> Type
+
+Type <|.. Class
+Type <|-- ParameterizedType
+Type <|-- GenericArrayType
+Type <|-- TypeVariable
+Type <|-- WildcardType
+
+note as N1
+TypeParameterResolver：会解析类里面的相关信息，如字段类型解析，方法返回值类型解析，方法参数类型解析
+Type：是所有类型的父接口, 反射的时候会用到
+Class：拿到 Class 对象，就相当于拿到了这个类的所有信息
+ParameterizedType：表示的是参数化类型，例如 List<String>、Service<User> 这种带有泛型的类型
+TypeVariable：表示的是类型变量，它用来反映在 JVM 编译该泛型前的信息，例如：List<T> 中的 T 就是类型变量
+它在编译时需被转换为一个具体的类型后才能正常使用。
+GenericArrayType：表示的是数组类型且组成元素是 ParameterizedType 或 TypeVariable
+WildcardType：表示的是通配符泛型，例如 ? extends Number
+end note
+
+
+@enduml
