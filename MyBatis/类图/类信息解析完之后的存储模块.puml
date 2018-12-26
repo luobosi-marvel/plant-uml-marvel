@@ -1,0 +1,93 @@
+@startuml
+
+interface ObjectWrapperFactory {
+    + hasWrapperFor(Object object): boolean
+    + getWrapperFor(MetaObject metaObject, Object object): ObjectWrapper
+}
+class DefaultObjectWrapperFactory {
+    + hasWrapperFor(Object object): boolean
+    + getWrapperFor(MetaObject metaObject, Object object): ObjectWrapper
+}
+
+
+interface ObjectWrapper {
+    + get(PropertyTokenizer prop): Object
+    + set(PropertyTokenizer prop, Object value): void
+    + findProperty(String name, boolean useCamelCaseMapping): String
+    + getGetterNames(): String[]
+    + getSetterNames(): String[]
+    + getSetterType(String name): Class<?>
+    + getGetterType(String name): Class<?>
+    + instantiatePropertyValue(String name, PropertyTokenizer prop, ObjectFactory objectFactory): MetaObject
+    + isCollection(): boolean
+    + add(Object element): void
+    + addAll(List<E> element): void
+}
+abstract class BaseWrapper {
+    - metaObject: MetaObject
+}
+class CollectionWrapper
+class BeanWrapper {
+    - object: Object
+    - metaClass: MetaClass
+}
+class MapWrapper
+class MetaObject {
+    - originalObject: Object
+    - objectWrapper: ObjectWrapper
+    - objectFactory: ObjectFactory
+    - objectWrapperFactory: ObjectWrapperFactory
+    - reflectorFactory: ReflectorFactory
+}
+
+class MetaClass {
+    - reflectorFactory: ReflectorFactory
+    - reflector: Reflector
+}
+
+interface ObjectFactory {
+    + setProperties(Properties properties): void
+    + create(Class<T> type): <T> T
+    + create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs): <T> T
+    + isCollection(Class<T> type): boolean
+}
+
+interface ReflectorFactory {
+    + findForClass(Class<?> type): Reflector
+}
+
+class Reflector {
+    - type: Class<?>
+    - readablePropertyNames: String[]
+    - writeablePropertyNames: String[]
+    - setMethods: Map<String, Invoker>
+    - getMethods: Map<String, Invoker>
+    - setTypes: Map<String, Class<?>>
+    - getTypes: Map<String, Class<?>>
+    - defaultConstructor: Constructor<?>
+    - caseInsensitivePropertyMap: Map<String, String>
+}
+
+ObjectWrapperFactory <|.. DefaultObjectWrapperFactory
+ObjectWrapperFactory ..> ObjectWrapper : 《创建》
+
+ObjectWrapper <|.. BaseWrapper
+ObjectWrapper <|.. CollectionWrapper
+BaseWrapper <|.. BeanWrapper
+BaseWrapper <|.. MapWrapper
+BaseWrapper *--> MetaObject
+BeanWrapper *--> MetaClass
+BeanWrapper *--> Object
+
+MetaObject *--> Object
+MetaObject *--> ObjectWrapper
+MetaObject *--> ObjectFactory
+MetaObject *--> ObjectWrapperFactory
+MetaObject *--> ReflectorFactory
+
+MetaClass *--> ReflectorFactory
+MetaClass *--> Reflector
+
+note left of Object: 原始的 JavaBean
+
+@enduml

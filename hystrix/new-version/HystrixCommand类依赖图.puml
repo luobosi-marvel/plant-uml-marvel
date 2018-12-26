@@ -1,0 +1,37 @@
+@startuml
+
+abstract class AbstractCommand {
+    - circuitBreaker: HystrixCircuitBreaker
+    - threadPool: HystrixThreadPool
+    - threadPoolKey: HystrixThreadPoolKey
+    - properties: HystrixCommandProperties
+    - metrics: HystrixCommandMetrics
+    - commandKey: HystrixCommandKey
+    - commandGroup: HystrixCommandGroupKey
+    - eventNotifier: HystrixEventNotifier
+    - concurrencyStrategy: HystrixConcurrencyStrategy
+    - executionHook: HystrixCommandExecutionHook
+    - fallbackSemaphoreOverride: TryableSemaphore
+    - isCommandTimedOut: AtomicReference<TimedOutStatus>
+    - requestCache: HystrixRequestCache
+    - currentRequestLog: HystrixRequestLog
+    - commandState: AtomicReference<CommandState>
+    - threadState: AtomicReference<ThreadState>
+    + HystrixExecutable : run() R
+    + HystrixExecutable : queue() Future<R>
+}
+
+
+HystrixExecutable  <|.. HystrixCommand
+AbstractCommand <|-- HystrixCommand
+HystrixExecutable : run() R
+HystrixExecutable : queue() Future<R>
+HystrixCommand o-- HystrixCircuitBreaker
+HystrixCommand o-- HystrixThreadPool
+HystrixCommand o-- HystrixThreadPoolKey
+HystrixCommand o-- HystrixCommandProperties
+HystrixCommand o-- HystrixCommandMetrics
+HystrixCommand o-- HystrixCommandKey
+HystrixCommand o-- HystrixCommandGroupKey
+
+@enduml
