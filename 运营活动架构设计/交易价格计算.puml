@@ -1,0 +1,38 @@
+@startuml
+
+abstract class AbstractList
+abstract AbstractCollection
+interface List
+interface Collection
+
+List <|-- AbstractList
+Collection <|-- AbstractCollection
+
+Collection <|- List
+AbstractCollection <|- AbstractList
+AbstractList <|-- ArrayList
+
+class SettleContext {
+    + AbstractPayChannel: icbcPay
+    + AbstractPayChannel: allinPay
+    + getPresellSettleCreateDTO(SettleCreate param): PresellSettleCreateDTO
+    + getOrderRefundFee(): OrderRefundFee
+}
+
+abstract class AbstractPayChannel {
+    + handleSettle(SettleCreate param): PresellSettleCreateDTO
+}
+
+
+class AllinPay {
+    + handleSettle(SettleCreate param): PresellSettleCreateDTO
+}
+note right of AllinPay: handleSettle方法里面会根据 spring 的
+
+enum TimeUnit {
+DAYS
+HOURS
+MINUTES
+}
+
+@enduml

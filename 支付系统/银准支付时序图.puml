@@ -1,0 +1,58 @@
+@startuml
+skinparam monochrome true
+actor 支付用户
+participant "饭好约客户端" as A
+participant "饭好约后端" as B
+participant "银准" as C
+支付用户 -> A: 1.打开饭好约客户端
+activate A
+A -> A: 2.选择商品下单
+A -> B: 3.请求生成支付订单
+activate B
+B -> C: 4.调用统一下单API()
+activate C
+C --> C: 生成预付单
+C --> B: 5.返回预付单信息
+deactivate C
+B --> B: 6.生成带签名的客户端支付信息
+B --> A: 7.返回支付信息
+deactivate B
+deactivate A
+支付用户 --> A: 8.用户确认支付
+
+activate A
+A -> A: 9.支付参数通过调用 SDK 调起支付
+A -> C: 10.发起支付请求
+activate C
+C -> C: 验证支付参数
+C -> A: 11.返回需要支付授权
+deactivate C
+deactivate A
+
+支付用户 --> A: 12.用户确认支付，输入密码
+activate A
+A -> C: 13.提交支付授权
+activate C
+
+C -> C: 验证授权
+activate B
+C -> B: 15.异步通知商户支付结果
+B -> B: 接收和保存支付结果
+C -> B: 16.返回告知已经成功接收处理
+deactivate B
+C --> A: 14.返回支付结果
+deactivate C
+activate B
+
+
+A -> B: 查询后台实际支付结果
+B -> C: 调用银准查询 API 查询支付结果
+activate C
+C --> B: 返回支付结果
+deactivate C
+B -> A: 返回支付结果
+deactivate B
+
+A --> 支付用户: 展示支付结果
+deactivate A
+@enduml

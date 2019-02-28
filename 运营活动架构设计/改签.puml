@@ -1,0 +1,11 @@
+@startuml
+
+
+"API" -> "presell-soa":  Request 执行改签
+"API" <-- "presell-soa": Response 改签结果
+
+"presell-soa" -> "订单中心": 确认改签是否合法后 request-> order-soa
+"订单中心" -> "presell-soa":  Response success->原有砍价信息写入
+"订单中心" -> "consumer-activity": 库存修改更新
+"consumer-activity" -> "订单中心": 订单信息修改
+@enduml
