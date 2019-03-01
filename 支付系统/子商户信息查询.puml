@@ -1,0 +1,20 @@
+@startuml
+skinparam monochrome true
+actor 运营 
+participant "商家管理后台" as A
+participant "presell-pay" as B
+participant "银准" as C
+运营 -> A: 1.进入管理后台
+activate A
+A -> B: 2.查询子商户基本信息
+activate B
+B -> C: 3.通过子商户账号查询商户的基本信息
+activate C
+C --> C: 查询商户的基本信息以及账户余额
+C --> B: 5.返回子商户的基本信息以及账户余额
+deactivate C
+B -> A: 6.返回查询结果
+deactivate B
+A --> 运营: 展示结果
+deactivate A
+@enduml

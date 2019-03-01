@@ -1,0 +1,22 @@
+@startuml
+skinparam monochrome true
+actor 运营 
+participant "商家管理后台" as A
+participant "presell-pay" as B
+participant "银准" as C
+participant "DB层" as D
+运营 -> A: 1.进入管理后台
+activate A
+A -> B: 2.输入要修改的信息（必传子商户号，订单号）
+activate B
+B -> C: 3.将修改的信息发送给银准（必传子商户号，订单号）
+activate C
+C --> C: 修改指定商户信息
+C --> B: 5.返回修改后的数据
+deactivate C
+B --> D: 6.把我们数据库里面的信息修改成银准返回的实体
+B --> A: 7.修改成功
+deactivate B
+A --> 运营: 展示结果
+deactivate A
+@enduml
