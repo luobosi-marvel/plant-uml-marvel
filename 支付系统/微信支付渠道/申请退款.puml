@@ -1,0 +1,30 @@
+@startuml
+skinparam monochrome true
+actor 用户
+participant "饭好约客户端" as A
+participant "presell-pay" as B
+participant "银准" as C
+participant "DB层" as D
+用户 -> A: 1.发起退款操作
+activate A
+A -> B: 2.申请退款
+activate B
+B -> C: 3.申请退款
+activate C
+B -> D: 4.记录用户退款流水
+C -> C: 处理退款申请
+C --> B: 4.返回退款实体\n（多笔退款时，若一笔退款失败需要重新提交,\n需要采用原来的退款单号）
+deactivate C
+B --> A: 6.告诉用户退款正在受理
+deactivate B
+
+activate C
+C --> B: 通过回调 url，通知 presell-pay 退款状态
+activate B
+B -> C: 返回 success 或失败
+B -> D: 修改退款状态
+deactivate B
+deactivate C
+A --> 用户: 正在退款
+deactivate A
+@enduml
