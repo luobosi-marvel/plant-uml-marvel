@@ -1,0 +1,20 @@
+@startuml
+skinparam monochrome true
+actor 运营 
+participant "商家管理后台" as A
+participant "presell-pay" as B
+participant "银准" as C
+participant "DB层" as D
+运营 -> A: 1.根据付款账号查询商户余额
+activate A
+A -> B: 2.根据付款账号查询余额信息
+activate B
+B -> C: 3.根据付款账号和\n biz_type = mchaccnt.balance.query 查询余额
+activate C
+C --> B: 4.返回商户余额
+deactivate C
+B --> A: 6.返回余额
+deactivate B
+A --> 运营: 显示余额信息
+deactivate A
+@enduml

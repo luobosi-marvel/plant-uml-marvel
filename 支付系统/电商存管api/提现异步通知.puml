@@ -1,0 +1,20 @@
+@startuml
+skinparam monochrome true
+participant "网关" as A
+participant "presell-pay" as B
+participant "银准" as C
+participant "DB" as D
+activate A
+activate C
+C -> A: 1.每五分钟回调 notify_url，告知提现状态
+A -> C: 2.告知提现是否成功，成功返回 success，则银准不再发起回调
+A -> D: 3.如果提现成功，或者5次回调提示都为失败，则修改提现流水的状态，并标记为提现失败
+deactivate A
+
+activate B
+B -> C: 4.主动查询提现状态，biz_type=mchaccnt.withdraw.notify
+deactivate C
+B -> D: 5.如果查询提现成功，或者几次查询都返回失败，则修改提现流水的状态，并标记为提现失败
+deactivate B
+
+@enduml

@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+participant "presell-pay" as B
+note left of B: 此接口一般用于订单结束后再次查询订单信息，\n支持所有方式，本接口不建 议用于预下单后查询用户是否支付，\n不建议频繁调用。
+participant "银准" as C
+activate B
+B -> C: 1.使用订单号或者微信支付订单号查询订单
+activate C
+C --> B: 2.返回订单信息，返回值包括交易状态、订单金额等参数
+deactivate C
+deactivate B
+@enduml
